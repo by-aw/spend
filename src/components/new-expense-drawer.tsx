@@ -1,20 +1,20 @@
 "use client";
 
-import { X } from "lucide-react";
-import { Button } from "./ui/button";
-import {
-  DrawerTrigger,
-  DrawerContent,
-  DrawerHeader,
-  DrawerClose,
-  Drawer,
-} from "./ui/drawer";
-import { Drawer as VDrawer } from "vaul";
-import { ExpandedInput } from "./ui/input";
-import { FormEvent, useRef } from "react";
+import { db } from "@/lib/db";
 import { Clock, Minus, Plus } from "@phosphor-icons/react";
 import { DialogClose } from "@radix-ui/react-dialog";
-import { db } from "@/lib/db";
+import { X } from "lucide-react";
+import { FormEvent, useRef } from "react";
+import { Drawer as VDrawer } from "vaul";
+import { Button } from "./ui/button";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTrigger,
+} from "./ui/drawer";
+import { ExpandedInput } from "./ui/input";
 
 function NewExpenseDrawer() {
   const formRef = useRef<HTMLFormElement>(null);
