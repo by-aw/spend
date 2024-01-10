@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import React, { useEffect } from "react";
+import React from "react";
 
 type AnimatedLettersProps = {
   text: string;
@@ -20,6 +20,7 @@ function AnimatedLetters({
       {text.split("").map((letter, index) => {
         return (
           <span
+            key={index}
             onAnimationEnd={() => {
               index == text.length - 1 && setAnimationFinished(true);
             }}

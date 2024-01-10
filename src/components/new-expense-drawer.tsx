@@ -1,10 +1,12 @@
 "use client";
 
 import { Expense, db } from "@/lib/db";
+import { cn } from "@/lib/utils";
 import { Clock, Minus, Plus } from "@phosphor-icons/react";
-import { DialogClose } from "@radix-ui/react-dialog";
+import { HTMLMotionProps } from "framer-motion";
 import { X } from "lucide-react";
-import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { Drawer as VDrawer } from "vaul";
 import { Button } from "./ui/button";
 import {
@@ -15,9 +17,6 @@ import {
   DrawerTrigger,
 } from "./ui/drawer";
 import { ExpandedInput } from "./ui/input";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
-import { cn } from "@/lib/utils";
-import { HTMLMotionProps } from "framer-motion";
 
 export type NewExpenseDrawerProps = {
   trigger: React.ReactNode;
@@ -67,10 +66,10 @@ function NewExpenseDrawer({
         }
       });
     }
-  }, []);
+  }, [editing]);
   useEffect(() => {
     reset();
-  }, [isSubmitSuccessful]);
+  }, [isSubmitSuccessful, reset]);
   return (
     <Drawer shouldScaleBackground>
       <DrawerTrigger asChild>{trigger}</DrawerTrigger>
