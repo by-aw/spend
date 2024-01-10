@@ -3,7 +3,7 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "@/lib/utils";
-import { motion } from "framer-motion";
+import { HTMLMotionProps, motion, MotionProps } from "framer-motion";
 
 type ButtonAnimations = {
   [key: string]: {
@@ -35,6 +35,11 @@ const buttonAnimations: ButtonAnimations = {
     transition: { type: "spring", stiffness: 1000, damping: 20 },
   },
   ghost: {
+    whileHover: {},
+    whileTap: { scale: 0.98, opacity: 0.8 },
+    transition: { type: "spring", stiffness: 1000, damping: 20 },
+  },
+  destructive: {
     whileHover: {},
     whileTap: { scale: 0.98, opacity: 0.8 },
     transition: { type: "spring", stiffness: 1000, damping: 20 },
@@ -73,31 +78,31 @@ const buttonVariants = cva(
 );
 
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+  extends HTMLMotionProps<"button">,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, type = "button", ...props }, ref) => {
+const Button = React.forwardRef<HTMLMotionProps<"button">, ButtonProps>(
+  (
+    { className, variant, size, asChild = false, type = "button", ...props },
+    ref
+  ) => {
     const Comp = asChild ? Slot : "button";
     const animation = variant
       ? buttonAnimations[variant]
       : buttonAnimations.default;
     return (
-      <motion.div
+      <motion.button
         tabIndex={-1}
         whileHover={animation.whileHover}
         whileTap={animation.whileTap}
         transition={animation.transition}
-      >
-        <Comp
-          className={cn(buttonVariants({ variant, size, className }))}
-          ref={ref}
-          type={type}
-          {...props}
-        />
-      </motion.div>
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref as React.Ref<HTMLButtonElement>}
+        type={type}
+        {...props}
+      />
     );
   }
 );

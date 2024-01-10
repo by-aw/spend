@@ -1,13 +1,13 @@
-const { fontFamily } = require("tailwindcss/defaultTheme")
+const { fontFamily } = require("tailwindcss/defaultTheme");
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
   ],
   prefix: "",
   theme: {
@@ -74,14 +74,26 @@ module.exports = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "overlay-up": "overlayShow 150ms cubic-bezier(0,.4,.4,1)",
+        "overlay-down": "overlayShow 150ms cubic-bezier(0,.4,.4,1) reverse",
+        shake: "shake 0.2s ease-in-out 0s 1",
+        fadein: "fadeIn 0.2s ease-out",
+        fadeout: "fadeOut 0.2s ease-out",
+        fade: "fade 400ms ease-in-out",
       },
       fontFamily: {
-        sans: ['var(--font-inter)'],
+        sans: ["var(--font-inter)"],
       },
       boxShadow: {
         surface: "var(--shadow-surface)",
-      }
+      },
+      margin: {
+        calc: "calc(100dvw - 100%)",
+      },
+      width: {
+        calc: "calc(100% - 2rem)",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};

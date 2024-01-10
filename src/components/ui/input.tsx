@@ -2,6 +2,7 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 import { Card } from "./card";
+import { HTMLMotionProps } from "framer-motion";
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -13,7 +14,7 @@ export interface InputProps
 const Input = React.forwardRef<
   HTMLInputElement | HTMLTextAreaElement,
   InputProps
->(({ className, textarea, type, value, id, ...props }, ref) => {
+>(({ className, textarea, type, value, id, onChange, ...props }, ref) => {
   if (textarea === true) {
     return (
       <textarea
@@ -24,6 +25,7 @@ const Input = React.forwardRef<
         ref={ref as React.Ref<HTMLTextAreaElement>}
         value={value}
         id={id}
+        {...(props as React.InputHTMLAttributes<HTMLTextAreaElement>)}
       />
     );
   } else {
@@ -34,9 +36,10 @@ const Input = React.forwardRef<
           "flex h-10 w-full rounded-md text-sm bg-transparent ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
           className
         )}
+        ref={ref as React.Ref<HTMLInputElement>}
         value={value}
         id={id}
-        ref={ref as React.Ref<HTMLInputElement>}
+        onChange={onChange}
         {...props}
       />
     );
@@ -58,6 +61,7 @@ const ExpandedInput = React.forwardRef<HTMLInputElement, InputProps>(
             </label>
           )}
           <Input
+            ref={ref}
             id={id}
             type={type}
             className={cn(
@@ -77,6 +81,4 @@ const ExpandedInput = React.forwardRef<HTMLInputElement, InputProps>(
 );
 ExpandedInput.displayName = "ExpandedInput";
 
-
 export { ExpandedInput, Input };
-

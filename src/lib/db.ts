@@ -6,7 +6,7 @@ export interface Expense {
   groupId: number;
   store: string;
   time: string;
-  amount: number;
+  amount: string;
   notes: string;
 }
 

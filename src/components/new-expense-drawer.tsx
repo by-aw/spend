@@ -1,10 +1,10 @@
 "use client";
 
-import { db } from "@/lib/db";
+import { Expense, db } from "@/lib/db";
 import { Clock, Minus, Plus } from "@phosphor-icons/react";
 import { DialogClose } from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
-import { FormEvent, useRef } from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import { Drawer as VDrawer } from "vaul";
 import { Button } from "./ui/button";
 import {
@@ -15,42 +15,74 @@ import {
   DrawerTrigger,
 } from "./ui/drawer";
 import { ExpandedInput } from "./ui/input";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { cn } from "@/lib/utils";
+import { HTMLMotionProps } from "framer-motion";
 
-function NewExpenseDrawer() {
-  const formRef = useRef<HTMLFormElement>(null);
-  function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    const formData = {
-      store: (document.getElementById("storeInput") as HTMLInputElement)?.value,
-      time: (document.getElementById("timeInput") as HTMLInputElement)?.value,
-      amount: (document.getElementById("amountInput") as HTMLInputElement)
-        ?.value,
-      notes: (document.getElementById("notesInput") as HTMLInputElement)?.value,
-    };
-    db.expenses.add({
-      groupId: -1,
-      store: formData.store,
-      time: formData.time,
-      amount: Number(formData.amount),
-      notes: formData.notes,
-    });
-  }
+export type NewExpenseDrawerProps = {
+  trigger: React.ReactNode;
+  editing?: boolean;
+  id?: number;
+};
+type Inputs = {
+  store: string;
+  time: string;
+  amount: string;
+  notes: string;
+};
+function NewExpenseDrawer({
+  trigger,
+  editing = false,
+  id,
+}: NewExpenseDrawerProps) {
+  const [shake, setShake] = useState(false);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { isSubmitSuccessful },
+  } = useForm<Inputs>();
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    if (editing) {
+      db.expenses.update(id!, data);
+    } else {
+      db.expenses.add(data as Expense);
+    }
+    handleCloseDrawer();
+  };
+  const onError = () => {
+    setShake(true);
+  };
+  const handleCloseDrawer = () => closeBtnRef.current?.click();
+  useEffect(() => {
+    if (editing) {
+      db.expenses.get({ id }).then((dbExpense) => {
+        if (dbExpense) {
+          setValue("store", dbExpense.store);
+          setValue("time", dbExpense.time);
+          setValue("amount", dbExpense.amount);
+          setValue("notes", dbExpense.notes);
+        }
+      });
+    }
+  }, []);
+  useEffect(() => {
+    reset();
+  }, [isSubmitSuccessful]);
   return (
     <Drawer shouldScaleBackground>
-      <DrawerTrigger asChild>
-        <Button
-          variant={"primary"}
-          className="rounded-full h-12 text-lg font-medium px-6 stroke-primary-stroke stroke-1 shadow-surface"
-        >
-          i spent $$$
-        </Button>
-      </DrawerTrigger>
+      <DrawerTrigger asChild>{trigger}</DrawerTrigger>
       <DrawerContent className="bg-drawer backdrop-blur-lg pb-6">
         <DrawerHeader className="flex p-4 items-center">
           <div className="w-12 h-12" />
           <h1 className="text-2xl font-bold text-center w-full">New Expense</h1>
           <DrawerClose asChild>
             <Button
+              ref={
+                closeBtnRef as unknown as React.Ref<HTMLMotionProps<"button">>
+              }
               variant={"icon"}
               size={"icon"}
               className="justify-self-end right-4"
@@ -60,12 +92,11 @@ function NewExpenseDrawer() {
           </DrawerClose>
         </DrawerHeader>
         <form
-          ref={formRef}
           className="flex flex-col px-4 gap-3"
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onSubmit, onError)}
         >
           <ExpandedInput
-            id="storeInput"
+            {...register("store", { required: true })}
             label="Store"
             additionalContent={
               <>
@@ -73,9 +104,10 @@ function NewExpenseDrawer() {
                 <Button>Amazon</Button>
               </>
             }
+            maxLength={16}
           />
           <ExpandedInput
-            id="timeInput"
+            {...register("time", { required: true })}
             label="At"
             placeholder="Just Now"
             type="datetime-local"
@@ -91,7 +123,7 @@ function NewExpenseDrawer() {
             }
           />
           <ExpandedInput
-            id="amountInput"
+            {...register("amount", { required: true })}
             label="How much?"
             additionalContent={
               <>
@@ -103,22 +135,26 @@ function NewExpenseDrawer() {
                 </Button>
               </>
             }
+            maxLength={9}
           />
           <ExpandedInput
-            id="notesInput"
+            {...register("notes", { required: false })}
             label="Any notes?"
             className="h-[96px] resize-none"
             textarea
+            maxLength={100}
           />
-          <DialogClose asChild>
-            <Button
-              type="submit"
-              variant={"primary"}
-              className="rounded-full h-12 w-full text-lg font-medium px-6 stroke-primary-stroke stroke-1 shadow-surface"
-            >
-              Add it
-            </Button>
-          </DialogClose>
+          <Button
+            type="submit"
+            variant={"primary"}
+            className={cn(
+              "rounded-full h-12 w-full text-lg font-medium px-6 stroke-primary-stroke stroke-1 shadow-surface",
+              shake && "animate-shake bg-red-600 hover:bg-red-600/80"
+            )}
+            onAnimationEnd={() => setShake(false)}
+          >
+            {editing ? "Done" : "Add it"}
+          </Button>
         </form>
       </DrawerContent>
     </Drawer>
