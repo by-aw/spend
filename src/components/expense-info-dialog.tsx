@@ -24,7 +24,7 @@ type ExpenseInfoDialogProps = {
 };
 
 function ExpenseInfoDialog({ expense, trigger }: ExpenseInfoDialogProps) {
-  const { disabled, setDisabled } = useContext(SwipeableContext);
+  const { disabled, swiping, setDisabled } = useContext(SwipeableContext);
   const closeRef = useRef<HTMLButtonElement>(null);
   const [showExactTime, setShowExactTime] = useState(false);
   function handleDelete() {

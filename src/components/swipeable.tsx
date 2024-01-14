@@ -23,8 +23,9 @@ const variants = {
 };
 export const SwipeableContext = createContext<{
   disabled: boolean;
+  swiping: boolean;
   setDisabled: Dispatch<SetStateAction<boolean>> | undefined;
-}>({ disabled: false, setDisabled: undefined });
+}>({ disabled: false, swiping: false, setDisabled: undefined });
 function Swipeable({
   children,
   onSwipeDown,
@@ -32,6 +33,7 @@ function Swipeable({
   allowSwipeDown = true,
   allowSwipeUp = true,
 }: SwipeableProps) {
+  const [swiping, setSwiping] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [scope, animate] = useAnimate();
   function handleDragEnd(event: MouseEvent, info: PanInfo) {
@@ -51,10 +53,12 @@ function Swipeable({
         await animate(scope.current, variants.visible, { duration: 0.1 });
       }, 100);
     }
+    setSwiping(false);
   }
   return (
-    <SwipeableContext.Provider value={{ disabled, setDisabled }}>
+    <SwipeableContext.Provider value={{ disabled, swiping, setDisabled }}>
       <motion.div
+        onDragStart={() => setSwiping(true)}
         drag={disabled ? undefined : "y"}
         dragConstraints={{ top: 0, bottom: 0 }}
         onDragEnd={handleDragEnd}

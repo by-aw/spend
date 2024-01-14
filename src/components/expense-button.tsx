@@ -1,26 +1,13 @@
 "use client";
 
 import { Expense } from "@/lib/db";
-import { Basket, PencilSimple, TrashSimple, X } from "@phosphor-icons/react";
+import { Basket } from "@phosphor-icons/react";
 import { motion, useIsPresent } from "framer-motion";
+import ExpenseInfoDialog from "./expense-info-dialog";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
-import Swipeable from "./swipeable";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogOverlay,
-  DialogTrigger,
-} from "@radix-ui/react-dialog";
-import { DialogFooter, DialogHeader } from "./ui/dialog";
-import { Domain } from "domain";
-import NewExpenseDrawer from "./new-expense-drawer";
-import { cn, formatDate, formatTime } from "@/lib/utils";
-import { useState } from "react";
-import AnimatedLetters from "./animated-letters";
-import ExpenseInfoDialog from "./expense-info-dialog";
-import exp from "constants";
+import { useContext } from "react";
+import { SwipeableContext } from "./swipeable";
 
 export type ExpenseButtonProps = {
   expense: Expense;
@@ -28,6 +15,7 @@ export type ExpenseButtonProps = {
 
 function ExpenseButton({ expense }: ExpenseButtonProps) {
   const isPresent = useIsPresent();
+  const { disabled, swiping, setDisabled } = useContext(SwipeableContext);
   return (
     <motion.div
       style={{
@@ -43,6 +31,7 @@ function ExpenseButton({ expense }: ExpenseButtonProps) {
         expense={expense}
         trigger={
           <Button
+            disabled={swiping}
             variant={"ghost"}
             className="w-full h-max justify-start p-0 gap-4 bg-background relative rounded-none"
           >
