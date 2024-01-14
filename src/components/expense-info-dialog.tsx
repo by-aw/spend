@@ -9,12 +9,14 @@ import {
   DialogTrigger,
 } from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
-import { ReactNode, useRef, useState } from "react";
+import { ReactNode, useContext, useEffect, useRef, useState } from "react";
 import AnimatedLetters from "./animated-letters";
 import NewExpenseDrawer from "./new-expense-drawer";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { DialogFooter, DialogHeader } from "./ui/dialog";
+import { SwipeableContext } from "./swipeable";
+import { useIsPresent } from "framer-motion";
 
 type ExpenseInfoDialogProps = {
   expense: Expense;
@@ -22,14 +24,19 @@ type ExpenseInfoDialogProps = {
 };
 
 function ExpenseInfoDialog({ expense, trigger }: ExpenseInfoDialogProps) {
+  const { disabled, setDisabled } = useContext(SwipeableContext);
   const closeRef = useRef<HTMLButtonElement>(null);
   const [showExactTime, setShowExactTime] = useState(false);
   function handleDelete() {
     db.expenses.delete(expense.id!);
     closeRef.current?.click();
   }
+  const isPresent = useIsPresent();
+  function handleOpenChange(open: boolean) {
+    setDisabled?.(open);
+  }
   return (
-    <Dialog>
+    <Dialog onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent>
         <DialogClose ref={closeRef} asChild>

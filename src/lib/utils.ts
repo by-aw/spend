@@ -82,3 +82,7 @@ export function formatDate(input: string): string {
     minute: "2-digit",
   });
 }
+
+export function getRandomThreeDigitNumber(): number {
+  return Math.floor(Math.random() * 900) + 100;
+}

@@ -73,7 +73,7 @@ function NewExpenseDrawer({
   return (
     <Drawer shouldScaleBackground>
       <DrawerTrigger asChild>{trigger}</DrawerTrigger>
-      <DrawerContent className="bg-drawer backdrop-blur-lg pb-6">
+      <DrawerContent className="bg-drawer backdrop-blur-lg pb-12 border-b-0">
         <DrawerHeader className="flex p-4 items-center">
           <div className="w-12 h-12" />
           <h1 className="text-2xl font-bold text-center w-full">New Expense</h1>
