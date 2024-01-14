@@ -21,7 +21,7 @@ function PageHeader({
   return (
     <header className="flex justify-between items-center relative">
       <div className="flex gap-2">
-        <Button onClick={onTimelineBack} variant={"icon"} size={"icon"}>
+        <Button onClick={onTimelineBack} variant={"default"} size={"icon"}>
           <ArrowUp size={32} fill="hsl(var(--foreground))" />
         </Button>
         {displayBack && (

@@ -8,6 +8,7 @@ import { X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Drawer as VDrawer } from "vaul";
+import { CategoryPopover, expenseCategories } from "./expense-info-dialog";
 import { Button } from "./ui/button";
 import {
   Drawer,
@@ -25,6 +26,7 @@ export type NewExpenseDrawerProps = {
 };
 type Inputs = {
   store: string;
+  groupId: number;
   time: string;
   amount: string;
   notes: string;
@@ -41,8 +43,8 @@ function NewExpenseDrawer({
     handleSubmit,
     reset,
     setValue,
-    formState: { isSubmitSuccessful },
-  } = useForm<Inputs>();
+    watch,
+  } = useForm<Inputs>({ defaultValues: { groupId: -1 } });
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     if (editing) {
       db.expenses.update(id!, data);
@@ -54,31 +56,49 @@ function NewExpenseDrawer({
   const onError = () => {
     setShake(true);
   };
-  const handleCloseDrawer = () => closeBtnRef.current?.click();
+  const handleCloseDrawer = () => {
+    closeBtnRef.current?.click();
+    reset();
+  };
   useEffect(() => {
     if (editing) {
       db.expenses.get({ id }).then((dbExpense) => {
         if (dbExpense) {
           setValue("store", dbExpense.store);
+          setValue("groupId", dbExpense.groupId);
           setValue("time", dbExpense.time);
           setValue("amount", dbExpense.amount);
           setValue("notes", dbExpense.notes);
         }
       });
     }
-  }, [editing]);
-  useEffect(() => {
-    reset();
-  }, [isSubmitSuccessful, reset]);
+  }, [editing, id, setValue]);
   return (
     <Drawer shouldScaleBackground>
       <DrawerTrigger asChild>{trigger}</DrawerTrigger>
       <DrawerContent className="bg-drawer backdrop-blur-lg pb-12 border-b-0">
         <DrawerHeader className="flex p-4 items-center">
-          <div className="w-12 h-12" />
+          <CategoryPopover
+            trigger={
+              <Button
+                className="outline outline-1 outline-foreground/50 bg-foreground/10 h-12 w-12"
+                variant={"icon"}
+                size={"icon"}
+              >
+                {watch("groupId") !== undefined
+                  ? expenseCategories.find((c) => c.id == watch("groupId"))
+                      ?.element
+                  : expenseCategories.find((c) => c.id == -1)?.element!}
+              </Button>
+            }
+            onSubmit={(cat) => {
+              setValue("groupId", cat);
+            }}
+          />
           <h1 className="text-2xl font-bold text-center w-full">New Expense</h1>
           <DrawerClose asChild>
             <Button
+              onClick={handleCloseDrawer}
               ref={
                 closeBtnRef as unknown as React.Ref<HTMLMotionProps<"button">>
               }

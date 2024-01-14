@@ -8,23 +8,9 @@ import Swipeable from "@/components/swipeable";
 import { Button } from "@/components/ui/button";
 import { db } from "@/lib/db";
 import { useLiveQuery } from "dexie-react-hooks";
-import {
-  AnimatePresence,
-  PanInfo,
-  motion,
-  useAnimate,
-  useInView,
-} from "framer-motion";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-const variants = {
-  visible: { opacity: 1, y: "0%" },
-  swipedDown: { opacity: 0, y: "100%" },
-  swipedUp: { opacity: 0, y: "-100%" },
-};
-
-export default function Home({ params }: { params: { id: string } }) {
+export default function Home() {
   const [currentTime, setCurrentTime] = useState(Date.now());
   const dateCurrentTime = new Date(currentTime);
   const expenses = useLiveQuery(

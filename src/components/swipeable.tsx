@@ -36,7 +36,7 @@ function Swipeable({
   const [swiping, setSwiping] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [scope, animate] = useAnimate();
-  function handleDragEnd(event: MouseEvent, info: PanInfo) {
+  function handleDragEnd(_event: MouseEvent, info: PanInfo) {
     if (info.offset.y > 10 && allowSwipeDown) {
       animate(scope.current, variants.swipedDown, { duration: 0.1 });
       onSwipeDown?.();

@@ -1,9 +1,8 @@
-import * as React from "react";
-import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
+import * as React from "react";
 
 import { cn } from "@/lib/utils";
-import { HTMLMotionProps, motion, MotionProps } from "framer-motion";
+import { HTMLMotionProps, motion } from "framer-motion";
 
 type ButtonAnimations = {
   [key: string]: {
@@ -44,6 +43,11 @@ const buttonAnimations: ButtonAnimations = {
     whileTap: { scale: 0.98, opacity: 0.8 },
     transition: { type: "spring", stiffness: 1000, damping: 20 },
   },
+  list: {
+    whileHover: {},
+    whileTap: { scale: 0.98, opacity: 0.8 },
+    transition: { type: "spring", stiffness: 1000, damping: 20 },
+  },
 };
 
 const buttonVariants = cva(
@@ -61,13 +65,15 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "",
         link: "text-primary underline-offset-4 hover:underline",
-        icon: "rounded-full bg-accent hover:bg-border",
+        icon: "rounded-full bg-accent hover:bg-border disabled:opacity-100",
+        list: "justify-start rounded-sm bg-transparent gap-3 text-lg font-normal hover:bg-secondary/90"
       },
       size: {
         default: "h-10 px-4 py-2",
         sm: "h-9 rounded-md px-3",
         lg: "h-11 rounded-md px-8",
         icon: "p-0 w-12 h-12 aspect-square",
+        list: "h-min py-2 px-4 w-full"
       },
     },
     defaultVariants: {
@@ -85,16 +91,15 @@ export interface ButtonProps
 
 const Button = React.forwardRef<HTMLMotionProps<"button">, ButtonProps>(
   (
-    { className, variant, size, asChild = false, type = "button", ...props },
+    { className, variant, size, asChild = false, disabled, type = "button", ...props },
     ref
   ) => {
-    const Comp = asChild ? Slot : "button";
     const animation = variant
       ? buttonAnimations[variant]
       : buttonAnimations.default;
     return (
       <motion.button
-        tabIndex={-1}
+        tabIndex={disabled ? -1 : undefined}
         whileHover={animation.whileHover}
         whileTap={animation.whileTap}
         transition={animation.transition}

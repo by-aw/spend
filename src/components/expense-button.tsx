@@ -1,13 +1,12 @@
 "use client";
 
 import { Expense } from "@/lib/db";
-import { Basket } from "@phosphor-icons/react";
 import { motion, useIsPresent } from "framer-motion";
-import ExpenseInfoDialog from "./expense-info-dialog";
+import { useContext } from "react";
+import ExpenseInfoDialog, { expenseCategories } from "./expense-info-dialog";
+import { SwipeableContext } from "./swipeable";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
-import { useContext } from "react";
-import { SwipeableContext } from "./swipeable";
 
 export type ExpenseButtonProps = {
   expense: Expense;
@@ -15,7 +14,7 @@ export type ExpenseButtonProps = {
 
 function ExpenseButton({ expense }: ExpenseButtonProps) {
   const isPresent = useIsPresent();
-  const { disabled, swiping, setDisabled } = useContext(SwipeableContext);
+  const { swiping } = useContext(SwipeableContext);
   return (
     <motion.div
       style={{
@@ -36,8 +35,13 @@ function ExpenseButton({ expense }: ExpenseButtonProps) {
             className="w-full h-max justify-start p-0 gap-4 bg-background relative rounded-none"
           >
             <Card className="flex items-center justify-items-center place-content-center w-16 h-16 rounded-sm bg-secondary">
-              <div className="p-2 bg-foreground/10 rounded-full outline outline-1 outline-foreground/50">
-                <Basket fill="hsl(var(--foreground))" size={28} />
+              <div
+                className={`inline-flex items-center justify-center rounded-full p-0 w-12 h-12 aspect-square`}
+              >
+                {
+                  expenseCategories.find((c) => c.id == expense.groupId)
+                    ?.element
+                }
               </div>
             </Card>
             <div className="flex flex-col items-start">
