@@ -74,7 +74,7 @@ function NewExpenseDrawer({
         if (dbExpense) {
           setValue("store", dbExpense.store);
           setValue("groupId", dbExpense.groupId);
-          setValue("time", "");
+          setValue("time", dbExpense.time);
           setValue("amount", dbExpense.amount);
           setValue("notes", dbExpense.notes);
         }
