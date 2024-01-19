@@ -1,13 +1,14 @@
 "use client";
-import React, { HTMLProps } from "react";
-import { Button } from "./ui/button";
 import { CaretDown, CaretUp } from "@phosphor-icons/react";
+import React from "react";
+import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
-interface IncrementalInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface IncrementalInputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {
   onIncrement: () => void;
   onDecrement: () => void;
-};
+}
 
 function IncrementalInput({
   onIncrement,

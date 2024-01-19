@@ -19,11 +19,6 @@ import {
 import IncrementalInput from "./incremental-input";
 import { Button } from "./ui/button";
 
-type SectionProps = {
-  title: string;
-  reset?: boolean;
-  expanded?: boolean;
-};
 
 type DateTimePickerProps = {
   trigger: ReactNode;
@@ -67,10 +62,10 @@ export const useCustomDateTimePicker = (
     setDateTime((prevDateTime) => {
       const parts = getDateTimeParts();
       parts[key] = value;
-  
+
       // Format the updated parts back into a string
       const updatedDateTime = `${parts.year}-${parts.month}-${parts.day}T${parts.hour}:${parts.minute}`;
-  
+
       if (Date.parse(updatedDateTime)) {
         // Valid date, update the state
         return updatedDateTime;
@@ -81,7 +76,6 @@ export const useCustomDateTimePicker = (
       }
     });
   };
-  
 
   return {
     month: getDateTimeParts().month,

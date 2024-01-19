@@ -1,7 +1,7 @@
 "use client";
 
 import { db } from "@/lib/db";
-import { cn, dateFromMultipleValues } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { Clock, Minus, Plus } from "@phosphor-icons/react";
 import { HTMLMotionProps } from "framer-motion";
 import { X } from "lucide-react";
@@ -143,7 +143,7 @@ function NewExpenseDrawer({
               <Controller
                 control={control}
                 name="time"
-                render={({ field: { onChange, onBlur, value } }) => {
+                render={({ field: { onChange, value } }) => {
                   console.log("Current value:", value);
 
                   return (
