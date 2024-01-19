@@ -5,6 +5,17 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function dateFromMultipleValues(
+  month: string,
+  day: string,
+  year: string,
+  hour: string,
+  minute: string,
+  ampm: string
+) {
+  return month + day + year + "T" + hour + minute + ampm;
+}
+
 export function formatTime(input: string) {
   const parsedInput = Date.parse(input);
   var returnString = "";
@@ -27,7 +38,6 @@ export function formatTime(input: string) {
     });
   return returnString;
 }
-
 
 export function formatDate(input: string): string {
   const parsedInput = new Date(input);
@@ -69,18 +79,20 @@ export function formatDate(input: string): string {
     parsedInput.getMonth() === today.getMonth() - 2
   ) {
     returnString = "Last month";
-  } else if (
-    parsedInput.getFullYear() === today.getFullYear() - 1
-  ) {
+  } else if (parsedInput.getFullYear() === today.getFullYear() - 1) {
     returnString = "Last year";
   } else {
     returnString = "More than a year ago";
   }
 
-  return returnString + " at " + parsedInput.toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  return (
+    returnString +
+    " at " +
+    parsedInput.toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+  );
 }
 
 export function getRandomThreeDigitNumber(): number {

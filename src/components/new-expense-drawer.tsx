@@ -1,13 +1,13 @@
 "use client";
 
-import { Expense, db } from "@/lib/db";
-import { cn } from "@/lib/utils";
+import { db } from "@/lib/db";
+import { cn, dateFromMultipleValues } from "@/lib/utils";
 import { Clock, Minus, Plus } from "@phosphor-icons/react";
 import { HTMLMotionProps } from "framer-motion";
 import { X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { Drawer as VDrawer } from "vaul";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import DateTimePicker from "./date-time-picker";
 import { CategoryPopover, expenseCategories } from "./expense-info-dialog";
 import { Button } from "./ui/button";
 import {
@@ -38,18 +38,26 @@ function NewExpenseDrawer({
 }: NewExpenseDrawerProps) {
   const [shake, setShake] = useState(false);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
-  const {
-    register,
-    handleSubmit,
-    reset,
-    setValue,
-    watch,
-  } = useForm<Inputs>({ defaultValues: { groupId: -1 } });
+  const { register, handleSubmit, control, reset, setValue, watch } =
+    useForm<Inputs>({
+      defaultValues: {
+        groupId: -1,
+        time: new Date(Date.now() + new Date().getTimezoneOffset() * -60 * 1000)
+          .toISOString()
+          .slice(0, 19),
+      },
+    });
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     if (editing) {
       db.expenses.update(id!, data);
     } else {
-      db.expenses.add(data as Expense);
+      db.expenses.add({
+        store: data.store,
+        groupId: data.groupId,
+        time: data.time,
+        amount: data.amount,
+        notes: data.notes,
+      });
     }
     handleCloseDrawer();
   };
@@ -66,7 +74,7 @@ function NewExpenseDrawer({
         if (dbExpense) {
           setValue("store", dbExpense.store);
           setValue("groupId", dbExpense.groupId);
-          setValue("time", dbExpense.time);
+          setValue("time", "");
           setValue("amount", dbExpense.amount);
           setValue("notes", dbExpense.notes);
         }
@@ -126,19 +134,34 @@ function NewExpenseDrawer({
             maxLength={16}
           />
           <ExpandedInput
-            {...register("time", { required: true })}
+            value={watch("time")}
+            onChange={(e) => setValue("time", e.currentTarget.value)}
             label="At"
             placeholder="Just Now"
             type="datetime-local"
             additionalContent={
-              <>
-                <VDrawer.NestedRoot>
-                  {/* Add Date Trigger here */}
-                </VDrawer.NestedRoot>
-                <Button variant="icon" size="icon">
-                  <Clock size={32} />
-                </Button>
-              </>
+              <Controller
+                control={control}
+                name="time"
+                render={({ field: { onChange, onBlur, value } }) => {
+                  console.log("Current value:", value);
+
+                  return (
+                    <DateTimePicker
+                      time={value}
+                      setTime={onChange}
+                      onChange={(newValue) => {
+                        setValue("time", newValue);
+                      }}
+                      trigger={
+                        <Button variant="icon" size="icon">
+                          <Clock size={32} />
+                        </Button>
+                      }
+                    />
+                  );
+                }}
+              />
             }
           />
           <ExpandedInput
